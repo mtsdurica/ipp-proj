@@ -1,8 +1,11 @@
 C=php8.1
 SRC_FILE=parse.php
-TEST_FILE=my_test.src
+TEST_FILE=./my_test/my_test.src
 OUT_FILE=my_test.out
 
-run:
-	$(C) $(SRC_FILE) < $(TEST_FILE) > $(OUT_FILE)
+run: clean
+	@$(C) $(SRC_FILE) < $(TEST_FILE) > $(OUT_FILE)
+	@cat $(OUT_FILE)
 
+clean:
+	@rm -rf $(OUT_FILE)
