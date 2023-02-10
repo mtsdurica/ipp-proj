@@ -2,3 +2,5 @@
 DeFvAr LF@prd
 defvar TF@-------
 write LF@prd
+write int@9
+write string@\032<not-tag/>\032 
