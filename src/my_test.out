@@ -1,1 +1,9 @@
-.IPPcode23Hello World
+<?xml version="1.0" encoding="UTF-8"?>
+<program language="IPPcode23">
+	<instruction order="1" opcode="DEFVAR">
+		<arg1 type="var">LF@prd</arg1>
+	</instruction>
+	<instruction order="2" opcode="DEFVAR">
+		<arg1 type="var">TF@-------</arg1>
+	</instruction>
+</program>
