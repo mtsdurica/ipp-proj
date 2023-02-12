@@ -21,6 +21,10 @@ run: clean
 	@echo "\n"
 	@$(JAR) $(JAR_BIN_FILE) $(OUT_DIR_PATH)/read_test.xml $(PARSE_TESTS_PATH)/read_test.out $(OUT_DIR_PATH)/delta.xml $(OPTIONS_FILE)
 
+test: clean
+	@$(C) test.php > ./tests.out
+
 clean:
 	@rm -rf $(MY_OUT_FILE)
 	@rm -rf $(OUT_DIR_PATH)/*
+	@rm -rf ./tests.out
