@@ -7,24 +7,24 @@
 
 class Instr_2_arg implements Visitable
 {
-    private $op_code;
-    private $order;
-    private $arg1;
-    private $arg2;
-    private $dom;
-    private $xml;
-    private $arg1_type;
-    private $arg2_type;
+    private string $op_code;
+    private int $order;
+    private string $arg1;
+    private string $arg2;
+    private \DOMDocument $dom;
+    private \DOMElement $xml;
+    private string $arg1_type;
+    private string $arg2_type;
 
     function __construct(
-        $instr,
-        $instr_order,
-        $arg1_type,
-        $arg2_type,
-        $arg1,
-        $arg2,
-        $dom,
-        $xml
+        string $instr,
+        int $instr_order,
+        string $arg1_type,
+        string $arg2_type,
+        string $arg1,
+        string $arg2,
+        \DOMDocument $dom,
+        \DOMElement $xml
     ) {
         $this->op_code = $instr;
         $this->order = $instr_order;
@@ -36,47 +36,47 @@ class Instr_2_arg implements Visitable
         $this->arg2_type = $arg2_type;
     }
 
-    function get_order()
+    function get_order(): int
     {
         return $this->order;
     }
 
-    function get_arg1_type()
+    function get_arg1_type(): string
     {
         return $this->arg1_type;
     }
 
-    function get_arg2_type()
+    function get_arg2_type(): string
     {
         return $this->arg2_type;
     }
 
-    function get_arg1()
+    function get_arg1(): string
     {
         return $this->arg1;
     }
 
-    function get_arg2()
+    function get_arg2(): string
     {
         return $this->arg2;
     }
 
-    function get_op_code()
+    function get_op_code(): string
     {
         return $this->op_code;
     }
 
-    function get_xml()
+    function get_xml(): \DOMElement
     {
         return $this->xml;
     }
 
-    function get_dom()
+    function get_dom(): \DOMDocument
     {
         return $this->dom;
     }
 
-    function accept(Visitor $visitor)
+    function parse(Visitor $visitor): void
     {
         $visitor->visit_2_arg($this);
     }
