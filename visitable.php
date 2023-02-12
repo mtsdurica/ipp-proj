@@ -7,5 +7,5 @@
 
 interface Visitable
 {
-    public function accept(Visitor $visitor);
+    public function parse(Visitor $visitor): void;
 }
