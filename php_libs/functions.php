@@ -260,7 +260,7 @@ function check_var($arg): array
     }
     if (
         preg_match(
-            "/^(LF|TF|GF)@[a-zA-Z_\-$&%*!?][a-zA-Z0-9_\-$&%*!?]*/",
+            "/^(LF|TF|GF)@[a-zA-Z\-_\$&%\*!\?][a-zA-Z\-_\$&%\*!\?\d]*$/",
             $arg
         )
     ) {
@@ -283,7 +283,7 @@ function check_label($arg): array
     }
     if (
         preg_match(
-            "/^[a-zA-Z\-_\$&%\*!\?][a-zA-Z\-_\$&%\*!\?]*$/",
+            "/^[a-zA-Z\-_\$&%\*!\?][a-zA-Z\-_\$&%\*!\?\d]*$/",
             $arg
         )
     ) {
@@ -306,7 +306,7 @@ function check_symb($arg): array
     }
     switch ($arg) {
         case (bool) preg_match(
-            "/^(LF|TF|GF)@[a-zA-Z_\-$&%*!?][a-zA-Z0-9_\-$&%*!?]*/",
+            "/^(LF|TF|GF)@[a-zA-Z_\-$&%*!?][a-zA-Z\d_\-$&%*!?]*$/",
             $arg
         ):
             $arg_type = "var";
@@ -318,7 +318,7 @@ function check_symb($arg): array
                 strstr($arg, "@", true) . "@"
             );
             break;
-        case (bool) preg_match("/^(int)@[0-9]*/", $arg):
+        case (bool) preg_match("/^int@(\+|-)?(?:\d+|0o[0-7][0-7_]+|0x[\da-fA-F][\da-fA-F_]+)$/", $arg):
             $arg_type = strstr($arg, "@", true);
             $arg = trim(
                 $arg,

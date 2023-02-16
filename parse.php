@@ -19,4 +19,5 @@ include "./php_libs/functions.php";
 
 ini_set("display_errors", "stderr");
 
+//TODO: add help
 parse_src_file(STDIN);

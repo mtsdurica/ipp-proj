@@ -6,6 +6,9 @@
  * @author Matúš Ďurica (xduric06@stud.fit.vutbr.cz)
  */
 
+/**
+ * Class defining functions for generating XML
+ */
 class Parse_visitor implements Visitor
 {
     function __construct()
