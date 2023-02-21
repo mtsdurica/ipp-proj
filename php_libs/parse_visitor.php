@@ -2,16 +2,20 @@
 
 /**
  * @file parse_visitor.php
+ * 
  * @author Matúš Ďurica (xduric06@stud.fit.vutbr.cz)
  */
 
+/**
+ * Class defining functions for generating XML
+ */
 class Parse_visitor implements Visitor
 {
     function __construct()
     {
     }
 
-    public function visit_no_arg($instr): void
+    public function visit_no_arg(Instr_no_arg $instr): void
     {
         $dom = $instr->get_dom();
         $xml = $instr->get_xml();
