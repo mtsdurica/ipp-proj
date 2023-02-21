@@ -7,7 +7,7 @@
 
 /**
  * Main parsing function
- * 
+ *
  * @param mixed $file Source file to parse from
  */
 function parse_src_file($file): void
@@ -21,7 +21,6 @@ function parse_src_file($file): void
     while ($stream = fgets($file)) {
         $stream = preg_replace("/\s+/", " ", $stream);
         $stream = remove_comment($stream);
-
         if (preg_match("/^\s*$/", $stream)) {
             continue;
         }
@@ -34,12 +33,18 @@ function parse_src_file($file): void
                     if (!preg_match("/^\s*\.IPPcode23$/", $split_str[0])) {
                         exit(21);
                     }
-                    $xml->setAttribute("language", str_replace(".", "", $split_str[0]));
+                    $xml->setAttribute(
+                        "language",
+                        str_replace(".", "", $split_str[0])
+                    );
                 } else {
                     if (!preg_match("/^\s*\.IPPcode23$/", $split_str[1])) {
                         exit(21);
                     }
-                    $xml->setAttribute("language", str_replace(".", "", $split_str[1]));
+                    $xml->setAttribute(
+                        "language",
+                        str_replace(".", "", $split_str[1])
+                    );
                 }
                 $xml = $dom->appendChild($xml);
                 $header_flag = true;
@@ -79,8 +84,6 @@ function parse_src_file($file): void
                         $dom,
                         $xml
                     );
-                    $instr_obj->parse($parser);
-                    $instr_cnt++;
                     break;
                 case "CREATEFRAME":
                 case "PUSHFRAME":
@@ -90,9 +93,12 @@ function parse_src_file($file): void
                     if (!empty($split_str[1])) {
                         exit(23);
                     }
-                    $instr_obj = new Instr_no_arg($instr, $instr_cnt, $dom, $xml);
-                    $instr_obj->parse($parser);
-                    $instr_cnt++;
+                    $instr_obj = new Instr_no_arg(
+                        $instr,
+                        $instr_cnt,
+                        $dom,
+                        $xml
+                    );
                     break;
                 case "POPS":
                 case "DEFVAR":
@@ -108,8 +114,6 @@ function parse_src_file($file): void
                         $dom,
                         $xml
                     );
-                    $instr_obj->parse($parser);
-                    $instr_cnt++;
                     break;
                 case "PUSHS":
                 case "DPRINT":
@@ -127,8 +131,6 @@ function parse_src_file($file): void
                         $dom,
                         $xml
                     );
-                    $instr_obj->parse($parser);
-                    $instr_cnt++;
                     break;
                 case "LABEL":
                 case "JUMP":
@@ -145,8 +147,6 @@ function parse_src_file($file): void
                         $dom,
                         $xml
                     );
-                    $instr_obj->parse($parser);
-                    $instr_cnt++;
                     break;
                 case "JUMPIFEQ":
                 case "JUMPIFNEQ":
@@ -168,8 +168,6 @@ function parse_src_file($file): void
                         $dom,
                         $xml
                     );
-                    $instr_obj->parse($parser);
-                    $instr_cnt++;
                     break;
                 case "READ":
                     if (!empty($split_str[3])) {
@@ -187,8 +185,6 @@ function parse_src_file($file): void
                         $dom,
                         $xml
                     );
-                    $instr_obj->parse($parser);
-                    $instr_cnt++;
                     break;
                 case "ADD":
                 case "SUB":
@@ -221,13 +217,13 @@ function parse_src_file($file): void
                         $dom,
                         $xml
                     );
-                    $instr_obj->parse($parser);
-                    $instr_cnt++;
                     break;
                 default:
                     exit(22);
                     break;
             }
+            $instr_obj->parse($parser);
+            $instr_cnt++;
             $arg = "";
         }
     }
@@ -250,7 +246,7 @@ function remove_comment($str): string
 
 /**
  * Checks if the inputted argument is in correct format
- * 
+ *
  * @param string $arg Argument to be checked
  */
 function check_var($arg): array
@@ -265,7 +261,7 @@ function check_var($arg): array
         )
     ) {
         $arg_type = "var";
-        return array($arg, $arg_type);
+        return [$arg, $arg_type];
     } else {
         exit(23);
     }
@@ -273,7 +269,7 @@ function check_var($arg): array
 
 /**
  * Checks if the inputted argument is in correct format
- * 
+ *
  * @param string $arg Argument to be checked
  */
 function check_label($arg): array
@@ -281,14 +277,9 @@ function check_label($arg): array
     if (empty($arg)) {
         exit(23);
     }
-    if (
-        preg_match(
-            "/^[a-zA-Z\-_\$&%\*!\?][a-zA-Z\-_\$&%\*!\?\d]*$/",
-            $arg
-        )
-    ) {
+    if (preg_match("/^[a-zA-Z\-_\$&%\*!\?][a-zA-Z\-_\$&%\*!\?\d]*$/", $arg)) {
         $arg_type = "label";
-        return array($arg, $arg_type);
+        return [$arg, $arg_type];
     } else {
         exit(23);
     }
@@ -296,7 +287,7 @@ function check_label($arg): array
 
 /**
  * Checks if the inputted argument is in correct format
- * 
+ *
  * @param string $arg Argument to be checked
  */
 function check_symb($arg): array
@@ -311,32 +302,26 @@ function check_symb($arg): array
         ):
             $arg_type = "var";
             break;
-        case (bool) preg_match("/^string@(([\x{0021}-\x{0022}\x{0024}-\x{005B}\x{005D}-\x{FFFF}])*|(\\\[0-9]{3})*)*$/mu", $arg):
+        case (bool) preg_match(
+            "/^string@(([\x{0021}-\x{0022}\x{0024}-\x{005B}\x{005D}-\x{FFFF}])*|(\\\[0-9]{3})*)*$/mu",
+            $arg
+        ):
             $arg_type = strstr($arg, "@", true);
-            $arg = trim(
-                $arg,
-                strstr($arg, "@", true) . "@"
-            );
+            $arg = trim($arg, strstr($arg, "@", true) . "@");
             break;
-        case (bool) preg_match("/^int@(\+|-)?(?:\d+|0o[0-7][0-7_]+|0x[\da-fA-F][\da-fA-F_]+)$/", $arg):
+        case (bool) preg_match(
+            "/^int@(\+|-)?(?:\d+|0o[0-7][0-7_]+|0x[a-fA-F\d][a-fA-F_\d]+)$/",
+            $arg
+        ):
             $arg_type = strstr($arg, "@", true);
-            $arg = trim(
-                $arg,
-                strstr($arg, "@", true) . "@"
-            );
+            $arg = trim($arg, strstr($arg, "@", true) . "@");
             if (!strcmp($arg, "")) {
                 exit(23);
             }
             break;
-        case (bool) preg_match(
-            "/^bool@(true|false)$/",
-            $arg
-        ):
+        case (bool) preg_match("/^bool@(true|false)$/", $arg):
             $arg_type = strstr($arg, "@", true);
-            $arg = trim(
-                $arg,
-                strstr($arg, "@", true) . "@"
-            );
+            $arg = trim($arg, strstr($arg, "@", true) . "@");
             if (!strcmp($arg, "")) {
                 exit(23);
             }
@@ -350,12 +335,12 @@ function check_symb($arg): array
             exit(23);
             break;
     }
-    return array($arg, $arg_type);
+    return [$arg, $arg_type];
 }
 
 /**
  * Checks if the inputted argument is in correct format
- * 
+ *
  * @param string $arg Argument to be checked
  */
 function check_type($arg): array
@@ -364,13 +349,24 @@ function check_type($arg): array
         exit(23);
     }
     if (preg_match("/^(int|string|bool)$/", $arg)) {
-        $arg = trim(
-            $arg,
-            strstr($arg, "@", true) . "@"
-        );
+        $arg = trim($arg, strstr($arg, "@", true) . "@");
         $arg_type = "type";
-        return array($arg, $arg_type);
+        return [$arg, $arg_type];
     } else {
         exit(23);
     }
+}
+
+/**
+ * Prints help to STDOUT
+ */
+function print_help(): void
+{
+    echo "Made by Matúš Ďurica (xduric06) VUT FIT v Brně 2023\n";
+    echo "\n";
+    echo "\033[1mNAME\033[0m\n";
+    echo "\tparse.php\t - Provides syntax and lexical analysis for IPPcode23 language and outputs results in XML\n";
+    echo "\n";
+    echo "\033[1mSYNOPSIS\033[0m\n";
+    echo "\t\033[1mphp8.1\033[0m parse.php [--help] < [SOURCE FILE]\n";
 }
