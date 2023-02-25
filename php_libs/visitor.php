@@ -6,6 +6,9 @@
  * @author Matúš Ďurica (xduric06@stud.fit.vutbr.cz)
  */
 
+/**
+ * Interface for visitor classes
+ */
 interface Visitor
 {
     /**

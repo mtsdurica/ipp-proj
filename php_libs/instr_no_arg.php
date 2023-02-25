@@ -6,6 +6,9 @@
  * @author Matúš Ďurica (xduric06@stud.fit.vutbr.cz)
  */
 
+/**
+ * Implementation of class for instruction with no arguments
+ */
 class Instr_no_arg implements Visitable
 {
     private string $op_code;
@@ -21,24 +24,24 @@ class Instr_no_arg implements Visitable
         $this->xml = $xml;
     }
 
-    function get_order(): int
-    {
-        return $this->order;
-    }
-
     function get_op_code(): string
     {
         return $this->op_code;
     }
 
-    function get_xml(): \DOMElement
+    function get_order(): int
     {
-        return $this->xml;
+        return $this->order;
     }
 
     function get_dom(): \DOMDocument
     {
         return $this->dom;
+    }
+
+    function get_xml(): \DOMElement
+    {
+        return $this->xml;
     }
 
     function parse(Visitor $visitor): void
