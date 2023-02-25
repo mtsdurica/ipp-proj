@@ -25,7 +25,7 @@ class Parse_visitor implements Visitor
         $xml->appendChild($xml_instr);
     }
 
-    public function visit_1_arg($instr): void
+    public function visit_1_arg(Instr_1_arg $instr): void
     {
         $dom = $instr->get_dom();
         $xml = $instr->get_xml();
@@ -41,7 +41,7 @@ class Parse_visitor implements Visitor
         $xml->appendChild($xml_instr);
     }
 
-    public function visit_2_arg($instr): void
+    public function visit_2_arg(Instr_2_arg $instr): void
     {
         $dom = $instr->get_dom();
         $xml = $instr->get_xml();
@@ -63,7 +63,7 @@ class Parse_visitor implements Visitor
         $xml->appendChild($xml_instr);
     }
 
-    public function visit_3_arg($instr): void
+    public function visit_3_arg(Instr_3_arg $instr): void
     {
         $dom = $instr->get_dom();
         $xml = $instr->get_xml();

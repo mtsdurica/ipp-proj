@@ -18,7 +18,9 @@ function parse_src_file($file): void
     $dom = new DOMDocument("1.0", "UTF-8");
     $dom->formatOutput = true;
     $xml = $dom->createElement("program");
+    //Main parsing cycle
     while ($stream = fgets($file)) {
+        //Removing whitespaces and comments
         $stream = preg_replace("/\s+/", " ", $stream);
         $stream = remove_comment($stream);
         if (preg_match("/^\s*$/", $stream)) {
@@ -57,12 +59,9 @@ function parse_src_file($file): void
                 exit(21);
             }
         }
-        fwrite(STDERR, "HFLAG " . (string) $header_flag . "\n");
-        fwrite(STDERR, "STREAM: " . $stream . "\n");
         $split_str = explode(" ", trim($stream, "\n"));
         $instr = strtoupper($split_str[0]);
         if ($header_flag && !preg_match("/^\#.*/", $instr)) {
-            fwrite(STDERR, "DEBUG: " . $instr . "\n");
             switch ($instr) {
                 case "NOT":
                 case "TYPE":
@@ -77,12 +76,12 @@ function parse_src_file($file): void
                     $instr_obj = new Instr_2_arg(
                         $instr,
                         $instr_cnt,
-                        $arg1_type,
-                        $arg2_type,
+                        $dom,
+                        $xml,
                         $arg1,
                         $arg2,
-                        $dom,
-                        $xml
+                        $arg1_type,
+                        $arg2_type
                     );
                     break;
                 case "CREATEFRAME":
@@ -109,10 +108,10 @@ function parse_src_file($file): void
                     $instr_obj = new Instr_1_arg(
                         $instr,
                         $instr_cnt,
-                        $arg_type,
-                        $arg,
                         $dom,
-                        $xml
+                        $xml,
+                        $arg,
+                        $arg_type
                     );
                     break;
                 case "PUSHS":
@@ -126,10 +125,10 @@ function parse_src_file($file): void
                     $instr_obj = new Instr_1_arg(
                         $instr,
                         $instr_cnt,
-                        $arg_type,
-                        $arg,
                         $dom,
-                        $xml
+                        $xml,
+                        $arg,
+                        $arg_type,
                     );
                     break;
                 case "LABEL":
@@ -142,10 +141,10 @@ function parse_src_file($file): void
                     $instr_obj = new Instr_1_arg(
                         $instr,
                         $instr_cnt,
-                        $arg_type,
-                        $arg,
                         $dom,
-                        $xml
+                        $xml,
+                        $arg,
+                        $arg_type
                     );
                     break;
                 case "JUMPIFEQ":
@@ -159,14 +158,14 @@ function parse_src_file($file): void
                     $instr_obj = new Instr_3_arg(
                         $instr,
                         $instr_cnt,
-                        $arg1_type,
-                        $arg2_type,
-                        $arg3_type,
+                        $dom,
+                        $xml,
                         $arg1,
                         $arg2,
                         $arg3,
-                        $dom,
-                        $xml
+                        $arg1_type,
+                        $arg2_type,
+                        $arg3_type,
                     );
                     break;
                 case "READ":
@@ -178,12 +177,12 @@ function parse_src_file($file): void
                     $instr_obj = new Instr_2_arg(
                         $instr,
                         $instr_cnt,
-                        $arg1_type,
-                        $arg2_type,
+                        $dom,
+                        $xml,
                         $arg1,
                         $arg2,
-                        $dom,
-                        $xml
+                        $arg1_type,
+                        $arg2_type
                     );
                     break;
                 case "ADD":
@@ -208,23 +207,23 @@ function parse_src_file($file): void
                     $instr_obj = new Instr_3_arg(
                         $instr,
                         $instr_cnt,
-                        $arg1_type,
-                        $arg2_type,
-                        $arg3_type,
+                        $dom,
+                        $xml,
                         $arg1,
                         $arg2,
                         $arg3,
-                        $dom,
-                        $xml
+                        $arg1_type,
+                        $arg2_type,
+                        $arg3_type
                     );
                     break;
                 default:
+                    fwrite(STDERR, "Error: Unknown instruction!\n");
                     exit(22);
                     break;
             }
             $instr_obj->parse($parser);
             $instr_cnt++;
-            $arg = "";
         }
     }
     echo $dom->saveXML($dom, LIBXML_NOEMPTYTAG);
@@ -248,6 +247,7 @@ function remove_comment($str): string
  * Checks if the inputted argument is in correct format
  *
  * @param string $arg Argument to be checked
+ * @return array Argument identificator and argument type
  */
 function check_var($arg): array
 {
@@ -271,6 +271,7 @@ function check_var($arg): array
  * Checks if the inputted argument is in correct format
  *
  * @param string $arg Argument to be checked
+ * @return array Argument identificator and argument type
  */
 function check_label($arg): array
 {
@@ -289,6 +290,7 @@ function check_label($arg): array
  * Checks if the inputted argument is in correct format
  *
  * @param string $arg Argument to be checked
+ * @return array Argument identificator and argument type
  */
 function check_symb($arg): array
 {
@@ -342,6 +344,7 @@ function check_symb($arg): array
  * Checks if the inputted argument is in correct format
  *
  * @param string $arg Argument to be checked
+ * @return array Argument identificator and argument type
  */
 function check_type($arg): array
 {

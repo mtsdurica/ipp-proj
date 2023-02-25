@@ -19,15 +19,12 @@ include "./php_libs/functions.php";
 
 ini_set("display_errors", "stderr");
 
-if ($argc === 2) {
-    if (!strcmp($argv[1], "--help")) {
-        print_help();
-        exit(0);
-    } else {
-        exit(10);
-    }
-} elseif ($argc === 1) {
+if ($argc === 2  && !strcmp($argv[1], "--help")) {
+    print_help();
+    exit(0);
+} else if ($argc === 1) {
     parse_src_file(STDIN);
 } else {
+    fwrite(STDERR, "ERROR: Unknown parameter or incorrect amount of parameters!\n");
     exit(10);
 }

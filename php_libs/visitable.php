@@ -7,7 +7,7 @@
  */
 
 /**
- * Interface for parsing
+ * Interface for visitable classes
  */
 interface Visitable
 {
