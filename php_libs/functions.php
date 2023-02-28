@@ -20,48 +20,31 @@ function parse_src_file($file): void
     $xml = $dom->createElement("program");
     //Main parsing cycle
     while ($stream = fgets($file)) {
-        //Removing whitespaces and comments
-        $stream = preg_replace("/\s+/", " ", $stream);
-        $stream = remove_comment($stream);
+        //Replacing multiple whitespaces with one whitespace and removing comments
+        $stream = format_stream($stream);
+        //Skipping blank lines
         if (preg_match("/^\s*$/", $stream)) {
             continue;
         }
         //Checking if header is present
         if (!$header_flag) {
-            //Matching the header to a regexp, if not correct exits with code 21
-            if (preg_match("/^\s*\.IPPcode23/", $stream)) {
-                $split_str = explode(" ", trim($stream, "\n"));
-                if (!empty($split_str[0])) {
-                    if (!preg_match("/^\s*\.IPPcode23$/", $split_str[0])) {
-                        exit(21);
-                    }
-                    $xml->setAttribute(
-                        "language",
-                        str_replace(".", "", $split_str[0])
-                    );
-                } else {
-                    if (!preg_match("/^\s*\.IPPcode23$/", $split_str[1])) {
-                        exit(21);
-                    }
-                    $xml->setAttribute(
-                        "language",
-                        str_replace(".", "", $split_str[1])
-                    );
-                }
+            //Matching the header to a regexp, if not matched, exits with code 21
+            if (preg_match("/^\.IPPcode23$/", $stream)) {
+                $xml->setAttribute(
+                    "language",
+                    str_replace(".", "", $stream)
+                );
                 $xml = $dom->appendChild($xml);
                 $header_flag = true;
-                continue;
-            } elseif (preg_match("/^\#.*/", $stream)) {
-                //Skipping comments before header
                 continue;
             } else {
                 fwrite(STDERR, "Error: Missing or incorrect header!\n");
                 exit(21);
             }
         }
-        $split_str = explode(" ", trim($stream, "\n"));
+        $split_str = explode(" ", $stream);
         $instr = strtoupper($split_str[0]);
-        if ($header_flag && !preg_match("/^\#.*/", $instr)) {
+        if ($header_flag) {
             switch ($instr) {
                 case "NOT":
                 case "TYPE":
@@ -230,14 +213,28 @@ function parse_src_file($file): void
 }
 
 /**
- * Functions checks for '#' in a string and if it finds one, it returns everything before the '#', if not it returns the inputted string
+ * Function trims and removes comments from string
  *
  * @param string $str String to be checked
+ * @return string Returns formatted string
+ */
+function format_stream($str): string
+{
+    $str = preg_replace("/\s+/", " ", $str);
+    $str = remove_comment($str);
+    return trim($str);
+}
+
+/**
+ * Function removes comments from string 
+ *
+ * @param string $str String to be checked
+ * @return string Returns everything before the '#', or returns the inputted string if no '#' was found
  */
 function remove_comment($str): string
 {
-    if (strpos($str, "#")) {
-        return $str = strstr($str, "#", true);
+    if (str_contains($str, "#")) {
+        return strstr($str, "#", true);
     } else {
         return $str;
     }
@@ -299,20 +296,22 @@ function check_symb($arg): array
     }
     switch ($arg) {
         case (bool) preg_match(
-            "/^(LF|TF|GF)@[a-zA-Z_\-$&%*!?][a-zA-Z\d_\-$&%*!?]*$/",
+            "/^(LF|TF|GF)@[a-zA-Z\-_\$&%\*!\?][a-zA-Z\-_\$&%\*!\?\d]*$/",
             $arg
         ):
             $arg_type = "var";
             break;
         case (bool) preg_match(
-            "/^string@(([\x{0021}-\x{0022}\x{0024}-\x{005B}\x{005D}-\x{FFFF}])*|(\\\[0-9]{3})*)*$/mu",
+            //Matching everything except '\' because '#' are already taken care of and whitespaces are exploded,
+            //therefore leading to error in instructions where it would be considered as too many arguments
+            "/^string@((?!\\\).|(\\\[\d]{3}))*$/",
             $arg
         ):
             $arg_type = strstr($arg, "@", true);
             $arg = trim($arg, strstr($arg, "@", true) . "@");
             break;
         case (bool) preg_match(
-            "/^int@(\+|-)?(?:\d+|0o[0-7][0-7_]+|0x[a-fA-F\d][a-fA-F_\d]+)$/",
+            "/^int@(\+|-)?(\d+|0o[0-7][0-7_]+|0x[a-fA-F\d][a-fA-F_\d]+)$/",
             $arg
         ):
             $arg_type = strstr($arg, "@", true);
@@ -368,8 +367,8 @@ function print_help(): void
     echo "Made by Matúš Ďurica (xduric06) VUT FIT v Brně 2023\n";
     echo "\n";
     echo "\033[1mNAME\033[0m\n";
-    echo "\tparse.php\t - Provides syntax and lexical analysis for IPPcode23 language and outputs results in XML\n";
+    echo "\tparse.php\t - Provides syntax and lexical analysis for IPPcode23 language inputted on STDIN and outputs results in XML to STDOUT\n";
     echo "\n";
     echo "\033[1mSYNOPSIS\033[0m\n";
-    echo "\t\033[1mphp8.1\033[0m parse.php [--help] < [SOURCE FILE]\n";
+    echo "\t\033[1mphp8.1\033[0m parse.php [--help]\n";
 }
