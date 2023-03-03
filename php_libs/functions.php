@@ -41,10 +41,9 @@ function parse_src_file($file): void
                 fwrite(STDERR, "Error: Missing or incorrect header!\n");
                 exit(21);
             }
-        }
-        $split_str = explode(" ", $stream);
-        $instr = strtoupper($split_str[0]);
-        if ($header_flag) {
+        } else if ($header_flag) {
+            $split_str = explode(" ", $stream);
+            $instr = strtoupper($split_str[0]);
             switch ($instr) {
                 case "NOT":
                 case "TYPE":
