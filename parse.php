@@ -25,6 +25,6 @@ if ($argc === 2  && !strcmp($argv[1], "--help")) {
 } else if ($argc === 1) {
     parse_src_file(STDIN);
 } else {
-    fwrite(STDERR, "ERROR: Unknown parameter or incorrect amount of parameters!\n");
+    fwrite(STDERR, "Error: Unknown parameter or incorrect amount of parameters!\n");
     exit(10);
 }

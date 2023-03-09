@@ -23,6 +23,7 @@ test: clean
 zip: clean
 	@zip -r $(ZIP_FILE) $(SRC_FILE) php_libs/ doc_imgs/ readme1.md rozsireni
 	@echo y | ./assignment/is_it_ok.sh $(ZIP_FILE) ./assignment/tmp 1
+	
 clean:
 	@rm -rf $(MY_OUT_FILE)
 	@rm -rf $(OUT_DIR_PATH)/*

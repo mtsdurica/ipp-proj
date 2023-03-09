@@ -315,16 +315,10 @@ function check_symb($arg): array
         ):
             $arg_type = strstr($arg, "@", true);
             $arg = trim($arg, strstr($arg, "@", true) . "@");
-            if (!strcmp($arg, "")) {
-                exit(23);
-            }
             break;
         case (bool) preg_match("/^bool@(true|false)$/", $arg):
             $arg_type = strstr($arg, "@", true);
             $arg = trim($arg, strstr($arg, "@", true) . "@");
-            if (!strcmp($arg, "")) {
-                exit(23);
-            }
             break;
         case (bool) preg_match("/^nil@nil$/", $arg):
             $arg_type = strstr($arg, "@", true);
@@ -350,7 +344,6 @@ function check_type($arg): array
         exit(23);
     }
     if (preg_match("/^(int|string|bool)$/", $arg)) {
-        $arg = trim($arg, strstr($arg, "@", true) . "@");
         $arg_type = "type";
         return [$arg, $arg_type];
     } else {
