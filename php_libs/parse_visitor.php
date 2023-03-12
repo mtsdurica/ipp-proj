@@ -34,7 +34,7 @@ class Parse_visitor implements Visitor
         $xml_instr->setAttribute("opcode", $instr->get_op_code());
         $xml_arg = $dom->createElement(
             "arg1",
-            htmlspecialchars($instr->get_arg())
+            htmlspecialchars($instr->get_arg()) //Using function to print XML escape sequences for some characters
         );
         $xml_arg->setAttribute("type", $instr->get_arg_type());
         $xml_instr->appendChild($xml_arg);

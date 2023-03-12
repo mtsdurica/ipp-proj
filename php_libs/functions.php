@@ -8,7 +8,7 @@
 /**
  * Main parsing function
  *
- * @param mixed $file Source file to parse from
+ * @param mixed $file Source to parse from
  */
 function parse_src_file($file): void
 {
@@ -18,7 +18,7 @@ function parse_src_file($file): void
     $dom = new DOMDocument("1.0", "UTF-8");
     $dom->formatOutput = true;
     $xml = $dom->createElement("program");
-    //Main parsing cycle
+    //Main parsing while cycle
     while ($stream = fgets($file)) {
         //Replacing multiple whitespaces with one whitespace and removing comments
         $stream = format_stream($stream);
@@ -44,6 +44,7 @@ function parse_src_file($file): void
         } else if ($header_flag) {
             $split_str = explode(" ", $stream);
             $instr = strtoupper($split_str[0]);
+            //Parsing switch statement, unknown instruction leads to exiting with code 22
             switch ($instr) {
                 case "NOT":
                 case "TYPE":
@@ -301,8 +302,11 @@ function check_symb($arg): array
             $arg_type = "var";
             break;
         case (bool) preg_match(
-            //Matching everything except '\' because '#' are already taken care of and whitespaces are exploded,
-            //therefore leading to error in instructions where it would be considered as too many arguments
+            /*
+            Matching everything except '\' because '#' is already taken care of and whitespaces are exploded,
+            therefore taken as arguments of the instruction,which would lead to error in instructions,
+            where it would be considered as too many arguments
+            */
             "/^string@((?!\\\).|(\\\[\d]{3}))*$/",
             $arg
         ):
