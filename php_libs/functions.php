@@ -29,10 +29,10 @@ function parse_src_file($file): void
         //Checking if header is present
         if (!$header_flag) {
             //Matching the header to a regexp, if not matched, exits with code 21
-            if (preg_match("/^\.IPPcode23$/", $stream)) {
+            if (preg_match("/^\.(?i)IPPcode23$/", $stream)) {
                 $xml->setAttribute(
                     "language",
-                    str_replace(".", "", $stream)
+                    "IPPcode23"
                 );
                 $xml = $dom->appendChild($xml);
                 $header_flag = true;
@@ -314,7 +314,7 @@ function check_symb($arg): array
             $arg = trim($arg, strstr($arg, "@", true) . "@");
             break;
         case (bool) preg_match(
-            "/^int@(\+|-)?(\d+|0o[0-7][0-7_]+|0x[a-fA-F\d][a-fA-F_\d]+)$/",
+            "/^int@(\+|-)?(0|[1-9][_\d]*[\d]+|0(O|o|_)?[0-7][0-7_]*|0(X|x)[a-fA-F\d][a-fA-F_\d]*[a-fA-F\d]+)$/",
             $arg
         ):
             $arg_type = strstr($arg, "@", true);
