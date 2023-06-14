@@ -9,7 +9,7 @@ Script is divided into multiple source files, which contain definitions of vario
 
 ### OOP implementation (NVP extension)
 I decided to use OOP for this part of the project. I used Visitor pattern, because I felt, it suited this project really well. Details of my implementation of the Visitor pattern can be seen in the diagram below.
-![Visitor pattern](./doc_imgs/parse_visitor_pattern.png)
+![Visitor pattern](./docs/parse_visitor_pattern.png)
 Visitor pattern allows adding new functions without needing to modify the classes (e.g., implementing another ```Visitor``` sub-class  which would parse into different language). Visitor pattern also allows programmers to follow open/closed principle (open for extension, closed for modification). This leads to easily extensible and reusable code.
 <br>
 
